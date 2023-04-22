@@ -1,0 +1,18 @@
+Dear [COMPANY_NAME],
+
+We are submitting this CCPA request on behalf of our client [YOUR_NAME] in accordance with the California Consumer Privacy Act (CCPA). [YOUR_NAME] is a resident of California and may be reached at [YOUR_EMAIL] or [YOUR_PHONE_NUMBER].
+
+We request that you provide us with the following information:
+
+A copy of all personal information you have collected on [YOUR_NAME] in the past 12 months.
+A list of all third parties with whom you have shared [YOUR_NAME]'s personal information in the past 12 months.
+A description of the business or commercial purpose for which [YOUR_NAME]'s personal information was collected and/or sold.
+The categories of personal information that you have sold about [YOUR_NAME] in the past 12 months and the categories of third parties to whom the personal information was sold.
+We also request that you delete all personal information you have collected about [YOUR_NAME] from your records, and that you refrain from selling any of [YOUR_NAME]'s personal information to any third party, and that you notify us when these processes are complete.
+
+Please provide us with the above information and confirmation of the opt-out within 45 days of receiving this request, as required by the CCPA.
+
+Thank you for your cooperation in this matter.
+
+Sincerely,
+DataGuardian

@@ -1,0 +1,22 @@
+Terms and Conditions for Client Authorization of CCPA Request
+
+This agreement (“Agreement”) is made between [Company Name] (“Company”) and [Client Name] (“Client”).
+
+Client authorizes Company to submit a request for information or deletion under the California Consumer Privacy Act (“CCPA”) on Client’s behalf to businesses that may have collected or sold Client’s personal information. Client acknowledges that Company is acting solely as Client’s agent for the purpose of making such requests and that Client remains fully responsible for providing accurate and complete information to Company.
+
+Client agrees to provide Company with all necessary information to make such requests, including, but not limited to, Client’s name, email address, and any other information reasonably required by Company to make the request.
+
+Client understands that Company may share Client’s information with third-party service providers as necessary to facilitate the CCPA request process. Client also acknowledges that any information provided by Company to businesses in connection with a CCPA request is subject to the businesses’ own privacy policies and that Company has no control over such policies.
+
+Client agrees to hold Company harmless and indemnify Company against any claims, damages, or other liabilities arising out of or related to Company’s actions in connection with making a CCPA request on Client’s behalf, except to the extent such claims, damages, or liabilities are caused by Company’s gross negligence or willful misconduct.
+This Agreement constitutes the entire agreement between the parties and supersedes all prior agreements and understandings, whether written or oral, relating to the subject matter of this Agreement. This Agreement shall be governed by and construed in accordance with the laws of the state of California, without regard to its conflicts of laws provisions.
+
+By signing below, Client acknowledges that they have read and understood this Agreement and agree to be bound by its terms and conditions.
+
+Client Signature: __
+
+Date: __
+
+Company Signature: __
+
+Date: __
