@@ -32,7 +32,7 @@ def create_app():
     def update_user(): 
 
         data = request.get_json() 
-        cnt = update_user_airtable(data)
+        cnt = update_user_airtable(data["user_email"], data["fields_to_update"])
 
         return{'response' : f"Updated {cnt} fields"}, 200 
 
@@ -43,8 +43,7 @@ def create_app():
     @app.route('/get_user', methods=['GET'])
     def get_user():
        
-        data = request.get_json() 
-        user_email = data.user_email
+        user_email = request.args.get('user_email')
 
         user_info = get_user_airtable(user_email)
         return jsonify(user_info), 200 

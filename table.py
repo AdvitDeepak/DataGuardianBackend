@@ -9,12 +9,13 @@ table.py -- code that implements the REST API's endpoints
 """
 
 import os 
-import airtable 
+from airtable import airtable
 from urllib.parse import urlparse 
 
 
 from dotenv import load_dotenv
 from help.mail import send_email 
+from help.help import openai_call_to_get_email
 
 load_dotenv() 
 AIRTABLE_BASE_ID = os.getenv("AIRTABLE_BASE_ID")
@@ -41,25 +42,25 @@ airtable_company_table = airtable.Airtable(
 # Helper Funcs: None 
 
 def update_user_airtable(user_email, fields_to_update): 
-    entry = airtable_user_table.search('User', user_email)
+    entries = airtable_user_table.search('User', user_email)
 
-    if entry is None: airtable_user_table.insert(fields_to_update)
-    else: airtable_user_table.update(entry['id'], fields_to_update)
+    if len(entries) == 0: airtable_user_table.insert(fields_to_update) 
+    else: airtable_user_table.update(entries[0]['id'], fields_to_update)
 
 
 
 # Helper Funcs: None 
 
 def get_user_airtable(user_email):
-    entry = airtable_user_table.search('User', user_email)
-
-    if entry is None: return None
-    else: user_profile = entry['fields']
-
     entries = airtable_user_table.search('User', user_email)
 
-    if entries is None: user_data =  []
-    else: user_data = entries['fields']
+    if len(entries) == 0: return None
+    else: user_profile = entries[0]['fields']
+
+    hist_entries = airtable_history_table.search('User', user_email)
+
+    if len(hist_entries) == 0: user_data =  []
+    else: user_data = hist_entries['fields']
 
     return {"user_profile": user_profile, "user_data": user_data}
     
@@ -68,7 +69,7 @@ def get_user_airtable(user_email):
 # Helper Funcs: None 
 
 def update_history_airtable(user_email, history): 
-    website_counts = dict()
+    website_counts = {}
 
     for site in history:
         parsed_url = urlparse(site['url'])
@@ -82,17 +83,17 @@ def update_history_airtable(user_email, history):
 
 
     for website, count in website_counts.items():
-        entry = airtable_history_table.search([ 'User', user_email, 'Company', website ])
+        entries = airtable_history_table.search([ 'User', user_email, 'Company', website ])
         
-        if entry is None:
-            airtable_user_table.insert({
+        if len(entries) == 0:
+            airtable_history_table.insert({
                 'User': user_email,
                 'Company': website,
                 'Times Visited': count,
                 'Status': "Visited"
             })
         else:
-            airtable_user_table.update(entry['id'], {'Times Visited': entry['fields']['Times Visited'] + count})
+            airtable_history_table.update(entries['id'], {'Times Visited': entries['fields']['Times Visited'] + count})
 
 
 
@@ -102,19 +103,29 @@ def update_website_airtable(user_email, websites):
 
     entries = airtable_user_table.search('User', user_email)
 
+    if len(entries) == 0: return None 
+
     user_first = entries[0]['First Name']
     user_last = entries[0]['Last Name']
     user_phone = entries[0]['Phone Number']
 
 
     for website in websites: 
-        entry = airtable_history_table.search(['User', user_email, 'Company', website])
+        entries = airtable_company_table.search('Company', website)
 
-        res = airtable_company_table.search(['Company', website])
-        company_email = res[0]['Email']
+        if len(entries) == 0:
+            # Call openai function to add to company table  
+            company_email = openai_call_to_get_email(website)
+            airtable_company_table.insert({'Company' : website, "Email" : company_email})
+        else: 
+            company_email = entries[0]['Email']
+        
+        entries = airtable_history_table.search({'User': user_email, 'Company': website})
+        
+        if len(entries) == 0: return None 
 
-        status = entry[0]['fields']['Status']
+        status = entries[0]['Status']
 
         if status == "Visited": 
             send_email(user_email, user_first, user_last, user_phone, company_email)
-            airtable_history_table.update(entry['id'], {'Status': "Pending"})
+            airtable_history_table.update(entries[0]['id'], {'Status': "Pending"})
