@@ -58,21 +58,25 @@ def get_user_airtable(user_email):
     else: user_profile = entries[0]['fields']
 
     hist_entries = airtable_history_table.search('User', user_email)
-
     if len(hist_entries) == 0: user_data =  []
-    else: user_data = hist_entries['fields']
+    else: user_data = [d['fields'] for d in hist_entries]
 
     return {"user_profile": user_profile, "user_data": user_data}
     
 
 
 # Helper Funcs: None 
-
+def check_company_match(company_name, data):
+    for d in data:
+        fields = d.get('fields', {})
+        if fields.get('Company') == company_name:
+            return True
+    return False
 def update_history_airtable(user_email, history): 
     website_counts = {}
 
     for site in history:
-        parsed_url = urlparse(site['url'])
+        parsed_url = urlparse(site)
         domain = parsed_url.netloc.split('.')
 
         if len(domain) > 2: company_name = domain[-2]
@@ -81,19 +85,23 @@ def update_history_airtable(user_email, history):
         if company_name in website_counts: website_counts[company_name] += 1
         else: website_counts[company_name] = 1
 
-
+    entries = airtable_history_table.search('User', user_email)
+    company_names = []
+    if len(entries) > 0:
+        company_names = {record['fields']['Company'] for record in entries}
     for website, count in website_counts.items():
-        entries = airtable_history_table.search([ 'User', user_email, 'Company', website ])
-        
-        if len(entries) == 0:
+        print(website)
+        print(count)
+        print(entries)
+        if website not in company_names:
             airtable_history_table.insert({
                 'User': user_email,
-                'Company': website,
+                'Company':  website,
                 'Times Visited': count,
-                'Status': "Visited"
+                'Status': "Unguarded"
             })
         else:
-            airtable_history_table.update(entries['id'], {'Times Visited': entries['fields']['Times Visited'] + count})
+            airtable_history_table.update(entries[0]['id'], {'Times Visited': entries[0]['fields']['Times Visited'] + count})
 
 
 
@@ -104,28 +112,25 @@ def update_website_airtable(user_email, websites):
     entries = airtable_user_table.search('User', user_email)
 
     if len(entries) == 0: return None 
+    user_first = entries[0]["fields"]['First Name']
+    user_last = entries[0]["fields"]['Last Name']
+    user_phone = entries[0]["fields"]['Phone Number']
 
-    user_first = entries[0]['First Name']
-    user_last = entries[0]['Last Name']
-    user_phone = entries[0]['Phone Number']
-
-
+    entries = airtable_history_table.search('User', user_email)
+    company_statuses = {}
+    if len(entries) > 0:
+        company_statuses = {record['fields']['Company']:(record["fields"]['Status'], record['id']) for record in entries}
+    
     for website in websites: 
         entries = airtable_company_table.search('Company', website)
-
+        print(entries)
         if len(entries) == 0:
             # Call openai function to add to company table  
             company_email = openai_call_to_get_email(website)
             airtable_company_table.insert({'Company' : website, "Email" : company_email})
         else: 
-            company_email = entries[0]['Email']
-        
-        entries = airtable_history_table.search({'User': user_email, 'Company': website})
-        
-        if len(entries) == 0: return None 
+            company_email = entries[0]["fields"]['Email']
 
-        status = entries[0]['Status']
-
-        if status == "Visited": 
+        if company_statuses[website][0] == "Unguarded": 
             send_email(user_email, user_first, user_last, user_phone, company_email, website)
-            airtable_history_table.update(entries[0]['id'], {'Status': "Pending"})
+            airtable_history_table.update(company_statuses[website][1], {'Status': "Pending"})

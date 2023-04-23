@@ -7,8 +7,8 @@ from serv import create_app
 from flask_cors import CORS
 import os 
 
-HOST = "127.0.0.1"
-PORT = 5000
+HOST = "localhost"
+PORT = 5001
 
 
 if __name__ == "__main__": 

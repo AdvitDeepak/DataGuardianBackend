@@ -34,7 +34,7 @@ def send_email(user_email, user_first, user_last, user_phone, company_email, com
     
     load_dotenv() 
     GMAIL_USER = os.getenv("GMAIL_USER")
-    APP_PASS = os.getenv("APP_PASS")
+    APP_PASS = os.getenv("GMAIL_PASS")
  
     user_name = f"{user_first} {user_last}"
     subject, body = populate_company_email_draft(user_email, user_name, user_phone, company_email, company_name)

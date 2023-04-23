@@ -33,7 +33,7 @@ def create_app():
 
         data = request.get_json() 
         cnt = update_user_airtable(data["user_email"], data["fields_to_update"])
-
+        
         return{'response' : f"Updated {cnt} fields"}, 200 
 
 
@@ -55,8 +55,12 @@ def create_app():
     @app.route('/update_history', methods=['POST'])
     def update_history(): 
 
-        data = request.get_json()['history']
-        update_history_airtable(data)
+        data = request.get_json()
+        user_email = data["user_email"]["email"]
+        print(user_email)
+        history = data["history"]
+        print(len(history))
+        update_history_airtable(user_email, history)
 
         return{'response' : f"Updated history"}, 200 
  
@@ -65,11 +69,12 @@ def create_app():
     # 4) POST - Get websites chosen by the user (in order to send the emails)
 
     @app.route('/update_websites', methods=['POST'])
-    def update_websites(): 
-
-       data = request.get_json() 
-       update_website_airtable(data)
-
+    def update_websites():
+        data = request.get_json() 
+        user_email = data["user_email"]
+        history = data["history"]
+        update_website_airtable(user_email, history)
+        return{'response' : f"Emailed"}, 200 
 
     return app
    
