@@ -43,8 +43,8 @@ airtable_company_table = airtable.Airtable(
 
 def update_user_airtable(user_email, fields_to_update): 
     entries = airtable_user_table.search('User', user_email)
-
-    if len(entries) == 0: airtable_user_table.insert(fields_to_update) 
+    if len(entries) == 0: 
+        airtable_user_table.insert(fields_to_update) 
     else: airtable_user_table.update(entries[0]['id'], fields_to_update)
 
 
