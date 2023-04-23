@@ -116,5 +116,5 @@ def update_website_airtable(user_email, websites):
         status = entry[0]['fields']['Status']
 
         if status == "Visited": 
-            send_email(user_email, user_first, user_last, user_phone, company_email)
+            send_email(user_email, user_first, user_last, user_phone, company_email, website)
             airtable_history_table.update(entry['id'], {'Status': "Pending"})

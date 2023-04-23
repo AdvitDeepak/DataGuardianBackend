@@ -1,40 +1,53 @@
 import cohere
 from dotenv import load_dotenv
-import os 
-
+import os, ssl 
 import smtplib
-
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from email.message import EmailMessage
 
 
-def send_email(user_email, user_first, user_last, user_phone, company_email): 
+
+def populate_company_email_draft(user_email, user_name, user_phone, company_email, company_name): 
+
+    subject = f"CCPA - Data Deletion Request for {company_name} on Behalf of {user_name}"
+    filename = os.getenv("MAIL_FILE")
+
+    with open(filename, "r") as file:
+        contents = file.read()
+        
+        # TODO - Replace the following occurrences w/ user data: 
+        
+        contents = contents.replace("[COMPANY_NAME]", company_name)
+        contents = contents.replace("[YOUR_NAME]", user_name)
+        contents = contents.replace("[YOUR_EMAIL]", user_email)
+        contents = contents.replace("[YOUR_PHONE_NUMBER]", user_phone)
+
+
+    return subject, contents 
+
+
+def send_email(user_email, user_first, user_last, user_phone, company_email, company_name): 
     
     load_dotenv() 
     GMAIL_USER = os.getenv("GMAIL_USER")
-    GMAIL_PASS = os.getenv("GMAIL_PASS")
+    APP_PASS = os.getenv("APP_PASS")
+ 
+    user_name = f"{user_first} {user_last}"
+    subject, body = populate_company_email_draft(user_email, user_name, user_phone, company_email, company_name)
 
-    message = MIMEMultipart()
-    message['Subject'] = 'Subject line of your email'
-    message['From'] = "OUR_EMAIL_ADDRESS"
-    message['CC'] = user_email 
-    message['To'] = company_email
+    em = EmailMessage()
+    em['From'] = GMAIL_USER
+    em['Cc'] = user_email 
+    em['To'] = company_email
+    em['subject'] = subject
+    em.set_content(body)
 
-    body = body # TODO -- load in the email and update necessary fields 
+    context = ssl.create_default_context()
 
-    message.attach(MIMEText(body, 'plain'))
-
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.starttls()
-    server.login(GMAIL_USER, GMAIL_PASS)
-
-    # send the email
-    text = message.as_string()
-    server.sendmail(message['From'], message['To'], message['CC'], text) # check the CC process
-    server.quit()
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+        smtp.login(GMAIL_USER, APP_PASS)
+        smtp.sendmail(GMAIL_USER, company_email, em.as_string())
 
     print('Email sent successfully!')
-
 
 
 

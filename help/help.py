@@ -44,25 +44,6 @@ def from_history_get_companies():
 
 
 
-def populate_company_email_draft(data): 
-
-    filename = os.getenv("MAIL_FILE")
-
-    with open(filename, "r") as file:
-        contents = file.read()
-        
-        # TODO - Replace the following occurrences w/ user data: 
-        
-        contents = contents.replace("[COMPANY_NAME]", None)
-        contents = contents.replace("[YOUR_NAME]", None)
-        contents = contents.replace("[YOUR_EMAIL]", None)
-        contents = contents.replace("[YOUR_PHONE_NUMBER]", None)
-
-
-    return contents 
-
-
-
 def openai_call_to_get_email(company_name): 
 
     load_dotenv()

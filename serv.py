@@ -32,6 +32,7 @@ def create_app():
     def update_user(): 
 
         data = request.get_json() 
+        
         cnt = update_user_airtable(data)
 
         return{'response' : f"Updated {cnt} fields"}, 200 
