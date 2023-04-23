@@ -1,6 +1,11 @@
 import cohere
 from dotenv import load_dotenv
 import os, ssl 
+import os 
+
+import imaplib
+import email
+
 import smtplib
 from email.message import EmailMessage
 
@@ -50,6 +55,26 @@ def send_email(user_email, user_first, user_last, user_phone, company_email, com
     print('Email sent successfully!')
 
 
+def parse_email_to_get_inbox(): 
+
+    # log in to your email account
+    mail = imaplib.IMAP4_SSL('imap.gmail.com')
+    mail.login('your_email@gmail.com', 'your_password')
+    mail.select('inbox')
+
+    # search for messages matching a specific criteria
+    result, data = mail.search(None, 'FROM', 'sender@example.com')
+
+    # iterate through the messages and extract information
+    for num in data[0].split():
+        result, data = mail.fetch(num, '(RFC822)')
+        msg = email.message_from_bytes(data[0][1])
+        print('Message subject:', msg['subject'])
+        print('From:', msg['from'])
+        print('To:', msg['to'])
+        print('Date:', msg['date'])
+        print('Message body:', msg.get_payload())
+        print('---------------------------------------')
 
 # Generate main email template (only to be called once) via CoHere
 

@@ -10,17 +10,17 @@ Work in progress!
 
 - Create a `.env` file that contains the following: 
 
-'''
+```
 OPENAI_KEY = "TBD"
 COHERE_KEY = "TBD"
-AIRTABLE_API_KEY = 'keyxYSDAiK8dePwPY'
-AIRTABLE_BASE_ID = 'appqIgPRLfvB3CY0w'
-AIRTABLE_COMPANY_EMAILS = 'Company Emails'
+AIRTABLE_API_KEY = 'TBD'
+AIRTABLE_BASE_ID = 'TBD'
+AIRTABLE_COMPANY_EMAILS = 'TBD'
 MAIL_FILE = "mail.txt"
 
-GMAIL_USER = "dataguardiantech@gmail.com"
-GMAIL_PASS = "babxyZ-wifvi6-gawpes"
-'''
+GMAIL_USER = "TBD"
+GMAIL_PASS = "TBD"
+```
 
 - Launch the server by running `python main.py`
 - By default, the server will be hosted on `127.0.0.1:5000`
